@@ -27,15 +27,16 @@ public class RestClient {
                 .get(List.class);
         return messages;
     }
-    public static void addMessage (String messageContent, String author){
+    public static Message addMessage (String messageContent, String author){
         Message message = new Message();
         message.setMessageContent(messageContent);
         message.setAuthor(author);
         Response postResponse = messagesTarget
                 .request()
                 .post(Entity.json(message));
+        return postResponse.readEntity(Message.class);
     }
-    public static void updateMessage(int id, String messageContent, String author){
+    public static Message updateMessage(int id, String messageContent, String author){
         Message message = new Message();
         message.setMessageContent(messageContent);
         message.setAuthor(author);
@@ -43,14 +44,17 @@ public class RestClient {
                 .resolveTemplate("messageId", id)
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.json(message));
+        return putResponse.readEntity(Message.class);
     }
-    public static void removeMessage(int id){
+    public static Message removeMessage(int id){
         Response deleteResponse = singleMessageTarget
                 .resolveTemplate("messageId", id)
                 .request().delete();
+        return deleteResponse.readEntity(Message.class);
     }
-    public static void removeAllMessages(){
+    public static String removeAllMessages(){
         Response deleteResponse = messagesTarget
                 .request().delete();
+        return deleteResponse.readEntity(String.class);
     }
 }
